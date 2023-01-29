@@ -36,6 +36,7 @@ int main() {
         } else if (cmd == "DELETE") { 
             table->Delete(PID);
         } else if (cmd == "PRINT") {
+            cin >> m;
             table->Print(m);
         }
         else if (cmd == "END") { 
