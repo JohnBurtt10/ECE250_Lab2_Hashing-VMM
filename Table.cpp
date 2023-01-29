@@ -11,7 +11,8 @@ Table::Table(int N, int P)
 
 // Destructor 
 Table::~Table() {
-    delete this->memory; 
+    delete []this->memory;
+    delete []array; 
 }
 
 void Table::Insert(unsigned int PID) {
@@ -119,10 +120,11 @@ void Table::Print(unsigned int m) {
         std::cout << "chain is empty" << std::endl;
         return;
     }
-    // for (auto it = this->array[m].begin();
-    // it != this->array[m].end(); it++) {
-    //     std::cout << it->PID; 
-    // }
+    for (auto it = this->array[m].begin();
+    it != this->array[m].end(); it++) {
+        std::cout << it->PID; 
+    }
+    std::cout << std::endl;
     return; 
 }
 
