@@ -1,3 +1,5 @@
+#ifndef Process_h
+#define Process_h
 #include <iostream>
 #include <cstdlib>
 class Process {
@@ -12,3 +14,4 @@ public:
     Process(unsigned int PID = 0, unsigned int physicalADDR = 0); 
 
 };
+#endif

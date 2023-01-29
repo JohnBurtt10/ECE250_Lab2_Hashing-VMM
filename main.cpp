@@ -1,4 +1,5 @@
 #include "Table.hpp"
+#include "Open.hpp"
 #include <iostream> 
 using namespace std; 
 
@@ -11,39 +12,86 @@ int main() {
     unsigned int ADDR;
     unsigned int m; 
     Table *table;
-    while (cin >> cmd) { 
-        if (cmd == "M") {
+    Open *open; 
+    bool flag; 
+    while (cin >> cmd) {
+        if (cmd == "OPEN") { 
+            flag = true; 
+        }
+        else if (cmd == "ORDERED") { 
+            flag = false;
+        }
+        else if (cmd == "M") {
             cin >> N; 
             cin >> P; 
-            table = new Table(N, P); 
-            std::cout << "success" << std::endl; 
+            if (flag) { 
+                open = new Open(N, P); 
+            }
+            else { 
+                table = new Table(N, P);
+            }
+        std::cout << "success" << std::endl; 
         } else if (cmd == "INSERT") { 
-            // cin >> name; 
             cin >> PID; 
-            table->Insert(PID);
+            if (flag) { 
+                open->Insert(PID);
+            } 
+            else { 
+                table->Insert(PID);
+            }
         } else if (cmd == "SEARCH") {
             cin >> PID;
-            table->Search(PID); 
+            if (flag) { 
+                open->Search(PID);
+            }
+            else { 
+                table->Search(PID); 
+            }
         } else if (cmd == "WRITE") { 
             cin >> PID; 
             cin >> ADDR; 
             cin >> x;
-            table->Write(PID, ADDR, x);
+            if (flag) { 
+                open->Write(PID, ADDR, x);
+            }
+            else { 
+                table->Write(PID, ADDR, x);
+            }
         } else if (cmd == "READ") {
             cin >> PID; 
             cin >> ADDR; 
-            table->Read(PID, ADDR);
-        } else if (cmd == "DELETE") { 
-            table->Delete(PID);
-        } else if (cmd == "PRINT") {
+            if (flag) { 
+                open->Read(PID, ADDR); 
+                }
+            else { 
+                table->Read(PID, ADDR);
+            }
+            } 
+            else if (cmd == "DELETE") { 
+            cin >> PID; 
+            if (flag) { 
+                open->Delete(PID);
+            }
+            else { 
+                table->Delete(PID);
+            }
+        } 
+        else if (cmd == "PRINT") {
             cin >> m;
-            table->Print(m);
+            if (!flag) { 
+                table->Print(m);
+            }
         }
         else if (cmd == "END") { 
             break;
         }
     }
-    delete table; 
+    if (flag) { 
+        delete open;
+    }
+    else { 
+        delete table;
+    }
     return 0;
 
 }
