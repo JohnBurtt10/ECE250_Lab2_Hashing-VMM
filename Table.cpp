@@ -6,31 +6,34 @@ Table::Table(int N, int P)
     this->pageSize = P;
     array = new std::vector<Process>[N/P]{std::vector<Process>(0,Process(0))}; 
     this->memory = new int[N];
+    this->availability = new bool[N/P]{}; 
 }
 
 // Destructor 
 Table::~Table() {
     delete []this->memory;
+    delete []this->availability;
     delete []array; 
 }
 
 void Table::Insert(unsigned int PID) {
 
-    if (this->randomCounter == (this->memorySize/this->pageSize)) {
-        std::cout << "failure" << std::endl;
-        return;
-
-    }
     if (this->array[PID%(this->memorySize/this->pageSize)].empty()) {
-        this->array[PID%(this->memorySize/this->pageSize)].push_back(Process(PID, this->randomCounter*this->pageSize));
-        this->randomCounter++; 
-        std::cout << "success" << std::endl;
-        return;
+        for (int i =0; i < this->memorySize/this->pageSize; i++) { 
+            if (this->availability[i] == false) { 
+                this->array[PID%(this->memorySize/this->pageSize)].push_back(Process(PID, i*this->pageSize));
+                this->availability[i] = true; 
+                std::cout << "success" << std::endl;
+                return;
+            }
+        }
+        std::cout << "failure" << std::endl;
+        return; 
     }    
         // Displaying element at each column,
         // begin() is the starting iterator,
         // end() is the ending iterator
-        int i =0; 
+        int x =0; 
         for (auto it = this->array[PID%(this->memorySize/this->pageSize)].begin();
              it != this->array[PID%(this->memorySize/this->pageSize)].end(); it++) {
             if (PID == it->PID) { 
@@ -38,13 +41,29 @@ void Table::Insert(unsigned int PID) {
                 return; 
             }
             else if (PID > it->PID) { 
-                this->array[PID%(this->memorySize/this->pageSize)].insert(this->array[PID%(this->memorySize/this->pageSize)].begin()+i, Process(PID));
-                this->randomCounter++;
+                for (int i =0; i < this->memorySize/this->pageSize; i++) { 
+                    if (this->availability[i] == false) { 
+                        this->array[PID%(this->memorySize/this->pageSize)].insert(this->array[PID%(this->memorySize/this->pageSize)].begin()+x, Process(PID, i*this->pageSize));
+                        this->availability[i] = true; 
+                        std::cout << "success" << std::endl;
+                        return;
+                    }
+                }
+                std::cout << "failure" << std::endl;
+                return; 
+            }
+            x++; 
+        }
+        for (int i =0; i < this->memorySize/this->pageSize; i++) { 
+            if (this->availability[i] == false) { 
+                this->array[PID%(this->memorySize/this->pageSize)].push_back(Process(PID, i*this->pageSize));
+                this->availability[i] = true; 
                 std::cout << "success" << std::endl;
                 return;
             }
-            i++; 
         }
+    std::cout << "failure" << std::endl; 
+    return;
     }
         
 
@@ -62,7 +81,7 @@ void Table::Write(unsigned int PID, unsigned int ADDR, int x) {
     // Checks if a process with the given PID exists
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
-        std::cout << "failure because can't find process" << std::endl;
+        std::cout << "failure" << std::endl;
         return;
     }
     // Checks if ADDR is within the virtual address space allocated to the process
@@ -100,8 +119,9 @@ void Table::Delete(unsigned int PID) {
     int i = 0;
     for (auto it = this->array[PID%(this->memorySize/this->pageSize)].begin();
     it != this->array[PID%(this->memorySize/this->pageSize)].end(); it++) {
-        if (PID == it->PID) { 
-              this->array[PID%this->memorySize/this->pageSize].erase(this->array[PID%this->memorySize/this->pageSize].begin() + i); 
+        if (PID == it->PID) {
+            this->availability[it->physicalADDR/this->pageSize] = false;  
+            this->array[PID%(this->memorySize/this->pageSize)].erase(this->array[PID%(this->memorySize/this->pageSize)].begin()+i);
             std::cout << "success" << std::endl;
             return; 
         }
@@ -119,7 +139,7 @@ void Table::Print(unsigned int m) {
     }
     for (auto it = this->array[m].begin();
     it != this->array[m].end(); it++) {
-        std::cout << it->PID; 
+        std::cout << it->PID << " "; 
     }
     std::cout << std::endl;
     return; 

@@ -10,7 +10,7 @@ public:
     Process *array;
     int memorySize; 
     int pageSize;
-    int randomCounter = 0;
+    // int randomCounter = 0;
     // Constructor 
     Open(int N, int P); 
     ~Open();

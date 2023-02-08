@@ -1,6 +1,5 @@
 #include "Open.hpp"
 // Constructor 
-unsigned int floor(unsigned int f);
 Open::Open(int N, int P)
 {
     this->memorySize = N; 
@@ -17,18 +16,16 @@ Open::~Open() {
 
 void Open::Insert(unsigned int PID) {
 
-    if (this->randomCounter == (this->memorySize/this->pageSize)) {
-        std::cout << "failure" << std::endl;
-        return;
-    }
-
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
-    unsigned int secondaryHashFunction = floor(PID/m) % m; 
+    unsigned int secondaryHashFunction = (PID/m) % m; 
+     if (secondaryHashFunction % 2 == 0) { 
+        secondaryHashFunction++;
+    }
     int i = 0; 
-    while (i < m-1) { 
+    while (i < m) { 
         if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == 0) {
-            this->array[(primaryHashFunction + i * secondaryHashFunction) % m] = Process(PID, this->randomCounter);
+            this->array[(primaryHashFunction + i * secondaryHashFunction) % m] = Process(PID, ((primaryHashFunction + i * secondaryHashFunction) % m) * pageSize);
             std::cout << "success" << std::endl;
             return;
         }
@@ -39,13 +36,21 @@ void Open::Insert(unsigned int PID) {
 }
         
 void Open::Search(unsigned int PID) {
-    Process Process = this->Get(PID);
-    if (Process.PID == 0) {
-        std::cout << "not found" << std::endl;
-        return;
+    unsigned int m = this->memorySize/this->pageSize; 
+    unsigned int primaryHashFunction = PID % m;
+    unsigned int secondaryHashFunction = (PID/m) % m; 
+    if (secondaryHashFunction % 2 == 0) { 
+        secondaryHashFunction++;
     }
-    std::cout << "found " << PID << " in " << PID%(this->memorySize/this->pageSize) << std::endl;
-    
+    int i = 0; 
+    while (i < m) {
+        if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == PID) { 
+                std::cout << "found " << PID << " in " << (primaryHashFunction + i * secondaryHashFunction) % m << std::endl;
+                return;
+        }
+        i++;
+    } 
+    std::cout << "not found" << std::endl;
 }
 
 void Open::Write(unsigned int PID, unsigned int ADDR, int x) {
@@ -87,11 +92,16 @@ void Open::Read(unsigned int PID, unsigned int ADDR) {
 void Open::Delete(unsigned int PID) { 
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
-    unsigned int secondaryHashFunction = floor(PID/m) % m; 
+    unsigned int secondaryHashFunction = (PID/m) % m; 
+     if (secondaryHashFunction % 2 == 0) { 
+        secondaryHashFunction++;
+    }
     int i = 0; 
-    while (i < m-1) {
+    while (i < m) {
         if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == PID) { 
-            this->array[PID%(this->memorySize/this->pageSize)] = Process(0); 
+            this->array[(primaryHashFunction + i * secondaryHashFunction) % m] = Process(0); 
+            std::cout << "success" << std::endl;
+            return;
         }
     i++;
     }
@@ -104,9 +114,12 @@ void Open::Delete(unsigned int PID) {
 Process Open::Get(unsigned int PID) { 
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
-    unsigned int secondaryHashFunction = floor(PID/m) % m; 
+    unsigned int secondaryHashFunction = (PID/m) % m; 
+     if (secondaryHashFunction % 2 == 0) { 
+        secondaryHashFunction++;
+    }
     int i = 0; 
-    while (i < m-1) {
+    while (i < m) {
         if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == PID) { 
             return this->array[(primaryHashFunction + i * secondaryHashFunction) % m]; 
         }
@@ -114,11 +127,3 @@ Process Open::Get(unsigned int PID) {
     }
     return Process(0);
     }
-
-unsigned int floor(unsigned int f)
-{
-  if( int (f+ 0.5) >= int (f-1) )
-  return f-1;
-  else 
-  return f;
-}

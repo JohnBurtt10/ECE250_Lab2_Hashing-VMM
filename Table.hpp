@@ -6,6 +6,7 @@ using namespace std;
 class Table {
 private:
 int *memory;
+bool *availability; 
 public:
     vector<Process>* array;
     int memorySize; 
@@ -21,7 +22,4 @@ public:
     void Delete(unsigned int PID);
     void Print(unsigned int PID); 
     Process Get(unsigned int PID);
-
-
-
 };
