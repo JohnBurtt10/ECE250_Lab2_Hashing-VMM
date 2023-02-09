@@ -15,37 +15,46 @@ Open::~Open() {
 }
 
 void Open::Insert(unsigned int PID) {
+    // Checks if a process with the given PID exists
+    Process getProcess = this->Get(PID);
+    if (getProcess.PID != 0) {
+        std::cout << "failure" << std::endl;
+        return;
+    }
 
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 
-     if (secondaryHashFunction % 2 == 0) { 
-        secondaryHashFunction++;
-    }
+    unsigned int hash;
+    if (secondaryHashFunction % 2 == 0) {secondaryHashFunction++;}
     int i = 0; 
     while (i < m) { 
-        if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == 0) {
-            this->array[(primaryHashFunction + i * secondaryHashFunction) % m] = Process(PID, ((primaryHashFunction + i * secondaryHashFunction) % m) * pageSize);
+        hash = (primaryHashFunction + i * secondaryHashFunction) % m; 
+        if (this->array[hash].PID == 0) {
+            this->array[hash] = Process(PID, hash * pageSize);
             std::cout << "success" << std::endl;
             return;
         }
         i++;
     }
     std::cout << "failure" << std::endl;
-    return;
 }
         
 void Open::Search(unsigned int PID) {
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 
-    if (secondaryHashFunction % 2 == 0) { 
-        secondaryHashFunction++;
-    }
+    if (secondaryHashFunction % 2 == 0) {secondaryHashFunction++;}
+    unsigned int hash; 
     int i = 0; 
     while (i < m) {
-        if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == PID) { 
-                std::cout << "found " << PID << " in " << (primaryHashFunction + i * secondaryHashFunction) % m << std::endl;
+        hash = (primaryHashFunction + i * secondaryHashFunction) % m; 
+        if (this->array[hash].PID == 0 && this->array[hash].deleted == false) {
+            std::cout << "not found" << std::endl;
+            return;
+        }
+        if (this->array[hash].PID == PID) { 
+                std::cout << "found " << PID << " in " << hash << std::endl;
                 return;
         }
         i++;
@@ -54,7 +63,6 @@ void Open::Search(unsigned int PID) {
 }
 
 void Open::Write(unsigned int PID, unsigned int ADDR, int x) {
-    // Checks if a process with the given PID exists
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
         std::cout << "failure" << std::endl;
@@ -93,13 +101,13 @@ void Open::Delete(unsigned int PID) {
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 
-     if (secondaryHashFunction % 2 == 0) { 
-        secondaryHashFunction++;
-    }
+    if (secondaryHashFunction % 2 == 0) {secondaryHashFunction++;}
+    unsigned int hash; 
     int i = 0; 
     while (i < m) {
-        if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == PID) { 
-            this->array[(primaryHashFunction + i * secondaryHashFunction) % m] = Process(0); 
+        hash = (primaryHashFunction + i * secondaryHashFunction) % m; 
+        if (this->array[hash].PID == PID) { 
+            this->array[hash] = Process(0, 0, true); 
             std::cout << "success" << std::endl;
             return;
         }
@@ -115,15 +123,20 @@ Process Open::Get(unsigned int PID) {
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 
-     if (secondaryHashFunction % 2 == 0) { 
-        secondaryHashFunction++;
-    }
+    if (secondaryHashFunction % 2 == 0) {secondaryHashFunction++;}
+    unsigned int hash; 
     int i = 0; 
     while (i < m) {
-        if (this->array[(primaryHashFunction + i * secondaryHashFunction) % m].PID == PID) { 
-            return this->array[(primaryHashFunction + i * secondaryHashFunction) % m]; 
+        hash = (primaryHashFunction + i * secondaryHashFunction) % m;
+        // Check if the process is not yet initialized in which case we can immediately determine that 
+        // the process with PID of parameter PID does not exist
+        if (this->array[hash].PID == 0 && this->array[hash].deleted == false) {
+            return Process(0);
         }
-    i++;
+        if (this->array[hash].PID == PID) { 
+            return this->array[hash]; 
+        }
+        i++;
     }
     return Process(0);
-    }
+}
