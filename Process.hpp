@@ -8,7 +8,6 @@ public:
     unsigned int PID;
     unsigned int physicalADDR; 
     bool deleted = false; 
-    // int x; 
 
 
     // Constructor 
