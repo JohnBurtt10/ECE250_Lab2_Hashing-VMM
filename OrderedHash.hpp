@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "Process.hpp"
 using namespace std;
-class Table {
+class OrderedHash {
 private:
 int *memory;
 bool *availability; 
@@ -13,8 +13,8 @@ public:
     int pageSize;
     int randomCounter = 0;
     // Constructor 
-    Table(int N, int P); 
-    ~Table();
+    OrderedHash(int N, int P); 
+    ~OrderedHash();
     void Insert(unsigned int PID = 0); 
     void Search(unsigned int PID); 
     void Write(unsigned int PID, unsigned int ADDR, int x);

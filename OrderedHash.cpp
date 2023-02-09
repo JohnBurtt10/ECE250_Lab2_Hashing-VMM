@@ -1,6 +1,6 @@
-#include "Table.hpp"
+#include "OrderedHash.hpp"
 // Constructor 
-Table::Table(int N, int P)
+OrderedHash::OrderedHash(int N, int P)
 {
     this->memorySize = N; 
     this->pageSize = P;
@@ -10,13 +10,13 @@ Table::Table(int N, int P)
 }
 
 // Destructor 
-Table::~Table() {
+OrderedHash::~OrderedHash() {
     delete []this->memory;
     delete []this->availability;
     delete []array; 
 }
 
-void Table::Insert(unsigned int PID) {
+void OrderedHash::Insert(unsigned int PID) {
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int hash = PID%m; 
 
@@ -55,7 +55,7 @@ void Table::Insert(unsigned int PID) {
     return;
     }
         
-void Table::Search(unsigned int PID) {
+void OrderedHash::Search(unsigned int PID) {
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
         std::cout << "not found" << std::endl;
@@ -65,7 +65,7 @@ void Table::Search(unsigned int PID) {
     
 }
 
-void Table::Write(unsigned int PID, unsigned int ADDR, int x) {
+void OrderedHash::Write(unsigned int PID, unsigned int ADDR, int x) {
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
         std::cout << "failure" << std::endl;
@@ -83,7 +83,7 @@ void Table::Write(unsigned int PID, unsigned int ADDR, int x) {
     }
 }
 
-void Table::Read(unsigned int PID, unsigned int ADDR) {
+void OrderedHash::Read(unsigned int PID, unsigned int ADDR) {
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
         std::cout << "failure" << std::endl;
@@ -100,7 +100,7 @@ void Table::Read(unsigned int PID, unsigned int ADDR) {
     }
 }
 
-void Table::Delete(unsigned int PID) { 
+void OrderedHash::Delete(unsigned int PID) { 
     int i = 0;
     unsigned int hash = PID%(this->memorySize/this->pageSize); 
     for (auto it = this->array[hash].begin();
@@ -118,7 +118,7 @@ void Table::Delete(unsigned int PID) {
 
 }
 
-void Table::Print(unsigned int m) {
+void OrderedHash::Print(unsigned int m) {
     if (this->array[m].empty()) { 
         std::cout << "chain is empty" << std::endl;
         return;
@@ -132,7 +132,7 @@ void Table::Print(unsigned int m) {
 }
 
 // helper function
-Process Table::Get(unsigned int PID) { 
+Process OrderedHash::Get(unsigned int PID) { 
     unsigned int hash = PID%(this->memorySize/this->pageSize); 
     for (auto it = this->array[hash].begin();
         it != this->array[hash].end(); it++) {

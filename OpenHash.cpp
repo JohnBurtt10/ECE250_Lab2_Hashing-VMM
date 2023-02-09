@@ -1,6 +1,6 @@
-#include "Open.hpp"
+#include "OpenHash.hpp"
 // Constructor 
-Open::Open(int N, int P)
+OpenHash::OpenHash(int N, int P)
 {
     this->memorySize = N; 
     this->pageSize = P;
@@ -9,12 +9,12 @@ Open::Open(int N, int P)
 }
 
 // Destructor 
-Open::~Open() {
+OpenHash::~OpenHash() {
     delete []this->memory;
     delete []array; 
 }
 
-void Open::Insert(unsigned int PID) {
+void OpenHash::Insert(unsigned int PID) {
     // Checks if a process with the given PID exists
     Process getProcess = this->Get(PID);
     if (getProcess.PID != 0) {
@@ -40,7 +40,7 @@ void Open::Insert(unsigned int PID) {
     std::cout << "failure" << std::endl;
 }
         
-void Open::Search(unsigned int PID) {
+void OpenHash::Search(unsigned int PID) {
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 
@@ -62,7 +62,7 @@ void Open::Search(unsigned int PID) {
     std::cout << "not found" << std::endl;
 }
 
-void Open::Write(unsigned int PID, unsigned int ADDR, int x) {
+void OpenHash::Write(unsigned int PID, unsigned int ADDR, int x) {
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
         std::cout << "failure" << std::endl;
@@ -80,7 +80,7 @@ void Open::Write(unsigned int PID, unsigned int ADDR, int x) {
     }
 }
 
-void Open::Read(unsigned int PID, unsigned int ADDR) {
+void OpenHash::Read(unsigned int PID, unsigned int ADDR) {
     Process Process = this->Get(PID);
     if (Process.PID == 0) {
         std::cout << "failure" << std::endl;
@@ -97,7 +97,7 @@ void Open::Read(unsigned int PID, unsigned int ADDR) {
     }
 }
 
-void Open::Delete(unsigned int PID) { 
+void OpenHash::Delete(unsigned int PID) { 
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 
@@ -119,7 +119,7 @@ void Open::Delete(unsigned int PID) {
 }
 
 // helper function
-Process Open::Get(unsigned int PID) { 
+Process OpenHash::Get(unsigned int PID) { 
     unsigned int m = this->memorySize/this->pageSize; 
     unsigned int primaryHashFunction = PID % m;
     unsigned int secondaryHashFunction = (PID/m) % m; 

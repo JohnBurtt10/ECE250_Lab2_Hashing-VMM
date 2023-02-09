@@ -1,5 +1,5 @@
-#include "Table.hpp"
-#include "Open.hpp"
+#include "OrderedHash.hpp"
+#include "OpenHash.hpp"
 #include <iostream> 
 using namespace std; 
 
@@ -11,8 +11,8 @@ int main() {
     unsigned int PID; 
     unsigned int ADDR;
     unsigned int m; 
-    Table *table;
-    Open *open; 
+    OrderedHash *orderedHash;
+    OpenHash *openHash; 
     bool flag; 
     while (cin >> cmd) {
         if (cmd == "OPEN") { 
@@ -25,61 +25,61 @@ int main() {
             cin >> N; 
             cin >> P; 
             if (flag) { 
-                open = new Open(N, P); 
+                openHash = new OpenHash(N, P); 
             }
             else { 
-                table = new Table(N, P);
+                orderedHash = new OrderedHash(N, P);
             }
         std::cout << "success" << std::endl; 
         } else if (cmd == "INSERT") { 
             cin >> PID; 
             if (flag) { 
-                open->Insert(PID);
+                openHash->Insert(PID);
             } 
             else { 
-                table->Insert(PID);
+                orderedHash->Insert(PID);
             }
         } else if (cmd == "SEARCH") {
             cin >> PID;
             if (flag) { 
-                open->Search(PID);
+                openHash->Search(PID);
             }
             else { 
-                table->Search(PID); 
+                orderedHash->Search(PID); 
             }
         } else if (cmd == "WRITE") { 
             cin >> PID; 
             cin >> ADDR; 
             cin >> x;
             if (flag) { 
-                open->Write(PID, ADDR, x);
+                openHash->Write(PID, ADDR, x);
             }
             else { 
-                table->Write(PID, ADDR, x);
+                orderedHash->Write(PID, ADDR, x);
             }
         } else if (cmd == "READ") {
             cin >> PID; 
             cin >> ADDR; 
             if (flag) { 
-                open->Read(PID, ADDR); 
+                openHash->Read(PID, ADDR); 
                 }
             else { 
-                table->Read(PID, ADDR);
+                orderedHash->Read(PID, ADDR);
             }
             } 
             else if (cmd == "DELETE") { 
             cin >> PID; 
             if (flag) { 
-                open->Delete(PID);
+                openHash->Delete(PID);
             }
             else { 
-                table->Delete(PID);
+                orderedHash->Delete(PID);
             }
         } 
         else if (cmd == "PRINT") {
             cin >> m;
             if (!flag) { 
-                table->Print(m);
+                orderedHash->Print(m);
             }
         }
         else if (cmd == "END") { 
@@ -87,10 +87,10 @@ int main() {
         }
     }
     if (flag) { 
-        delete open;
+        delete openHash;
     }
     else { 
-        delete table;
+        delete orderedHash;
     }
     return 0;
 

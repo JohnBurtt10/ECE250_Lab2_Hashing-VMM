@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "Process.hpp"
 using namespace std;
-class Open {
+class OpenHash {
 private:
 int *memory;
 public:
@@ -12,8 +12,8 @@ public:
     int pageSize;
     // int randomCounter = 0;
     // Constructor 
-    Open(int N, int P); 
-    ~Open();
+    OpenHash(int N, int P); 
+    ~OpenHash();
     void Insert(unsigned int PID = 0); 
     void Search(unsigned int PID); 
     void Write(unsigned int PID, unsigned int ADDR, int x);

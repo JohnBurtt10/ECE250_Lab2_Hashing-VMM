@@ -1,2 +1,2 @@
-all: Process.cpp Table.cpp Open.cpp main.cpp
-	g++ -g -std=c++11 Process.cpp Table.cpp Open.cpp main.cpp
+all: Process.cpp OrderedHash.cpp OpenHash.cpp main.cpp
+	g++ -g -std=c++11 Process.cpp OrderedHash.cpp OpenHash.cpp main.cpp
